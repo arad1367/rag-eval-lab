@@ -1,0 +1,22 @@
+# Virtual environment
+envy_ragy/
+
+# Secrets - NEVER commit these
+.env
+
+# Python cache / build files
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# Downloaded embedding model files
+.cache/
+
+# Editor / OS files
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,6 @@
+# Development-only tools (testing, linting, notebooks). Not installed in Docker.
+-r requirements.txt
+pytest==9.2.0
+httpx==0.28.1     # needed by FastAPI's TestClient
+ruff==0.17.4      # linter + formatter
+ipykernel==7.4.0  # lets VS Code run "# %%" notebook cells

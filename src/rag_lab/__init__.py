@@ -1,0 +1,1 @@
+"""rag_lab: a small, well-tested Retrieval-Augmented Generation (RAG) system."""
