@@ -80,3 +80,4 @@ print(result["latency_ms"], result["usage"])
 
 # %% Ask something your papers do NOT cover. Does it say "I don't know"?
 print(pipeline.answer("What is the best pizza in Naples?")["answer"])
+# %%
