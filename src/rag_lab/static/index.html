@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RAG Eval Lab</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 760px;
+        margin: 40px auto;
+        padding: 0 16px;
+        color: #222;
+      }
+      textarea {
+        width: 100%;
+        height: 70px;
+        font-size: 16px;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+      button,
+      select {
+        font-size: 16px;
+        padding: 8px 14px;
+        margin-top: 8px;
+      }
+      #answer {
+        white-space: pre-wrap;
+        background: #f5f5f5;
+        padding: 12px;
+        border-radius: 6px;
+        margin-top: 16px;
+      }
+      .meta {
+        color: #666;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>RAG Eval Lab</h1>
+    <p>
+      Ask a question about recent arXiv papers (cs.CL). Answers cite their
+      sources. API docs: <a href="docs">/docs</a>
+    </p>
+    <textarea
+      id="q"
+      placeholder="e.g. How can retrieval reduce hallucination in LLMs?"
+    ></textarea>
+    <div>
+      <select id="r">
+        <option value="hybrid">hybrid</option>
+        <option value="dense">dense</option>
+        <option value="bm25">bm25</option>
+      </select>
+      <button id="go">Ask</button>
+    </div>
+    <div id="answer">The answer will appear here.</div>
+    <ol id="sources"></ol>
+    <p class="meta" id="meta"></p>
+    <script>
+      document.getElementById("go").onclick = async () => {
+        const answer = document.getElementById("answer");
+        const sources = document.getElementById("sources");
+        answer.textContent = "Thinking...";
+        sources.innerHTML = "";
+        const res = await fetch("ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: document.getElementById("q").value,
+            retriever: document.getElementById("r").value,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          answer.textContent = "Error: " + JSON.stringify(data.detail);
+          return;
+        }
+        answer.textContent = data.answer;
+        for (const s of data.sources) {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = s.url;
+          a.target = "_blank";
+          a.textContent = s.title;
+          li.appendChild(a);
+          sources.appendChild(li);
+        }
+        document.getElementById("meta").textContent =
+          `retriever: ${data.retriever} | latency: ${data.latency_ms.total} ms | tokens: ` +
+          `${data.usage.prompt_tokens} in / ${data.usage.completion_tokens} out`;
+      };
+    </script>
+  </body>
+</html>
