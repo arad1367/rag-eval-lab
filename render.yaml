@@ -1,0 +1,17 @@
+# Render "Blueprint" = infrastructure as code: the server is described in a file
+# in the repo, instead of clicking settings by hand. Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: rag-eval-lab
+    runtime: docker # build and run our Dockerfile
+    plan: free # 512 MB RAM, sleeps after 15 min without traffic
+    region: frankfurt # closest region to Hungary
+    healthCheckPath: /health # Render only sends traffic once /health answers OK
+    autoDeployTrigger: "off" # GitHub Actions decides when to deploy (deploy.yml)
+    envVars:
+      - key: LLM_API_KEY
+        sync: false # secret: Render asks you for the value, never stored in git
+      - key: LLM_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: LLM_MODEL
+        value: openai/gpt-oss-20b
